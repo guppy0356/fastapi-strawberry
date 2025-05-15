@@ -4,6 +4,11 @@ from sqlalchemy.orm import Session
 from strawberry.types import Info
 from models import Post as PostModel, Author as AuthorModel, Comment as CommentModel
 from database import get_db
+import logging
+
+# SQLAlchemyのログ設定
+logging.basicConfig()
+logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
 
 @strawberry.type
 class Comment:
@@ -46,6 +51,8 @@ class Query:
     @strawberry.field
     def posts(self, info: Info) -> List[Post]:
         db: Session = next(get_db())
+        # SQL実行前にログを出力
+        logging.info("Fetching all posts from database")
         db_posts = db.query(PostModel).all()
         
         result = []
